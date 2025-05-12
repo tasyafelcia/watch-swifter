@@ -76,6 +76,22 @@ final class UpcomingSessionViewModel: ObservableObject {
         self.days = Int(ceil(timeUntil / 86400))
     }
     
+    // MARK: - Watch Connectivity
+    func sendSessionsToWatch(sessionManager: JoggingSessionManager) {
+        // Get all sessions for today and tomorrow
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        let twoDaysLater = calendar.date(byAdding: .day, value: 2, to: today)!
+        
+        let allSessions = sessionManager.fetchAllSessions()
+        
+        let relevantSessions = allSessions.filter { session in
+            session.startTime >= today && session.startTime < twoDaysLater
+        }
+        
+        // Send to watch
+        WatchConnectivityManager.shared.sendSessionsToWatch(relevantSessions)
+    }
     
     /// session functions
     func rescheduleSessions(
@@ -121,7 +137,9 @@ final class UpcomingSessionViewModel: ObservableObject {
             }
             
             sessionManager.saveContext()
-//            print("reschedule success")
+            
+            // Send updated sessions to watch
+            sendSessionsToWatch(sessionManager: sessionManager)
         }
     }
     
@@ -138,6 +156,9 @@ final class UpcomingSessionViewModel: ObservableObject {
         sessionManager.saveContext()
         goalManager.saveContext()
         
+        // Send updated sessions to watch
+        sendSessionsToWatch(sessionManager: sessionManager)
+        
         return checkIfGoalCompleted()
     }
     
@@ -152,6 +173,9 @@ final class UpcomingSessionViewModel: ObservableObject {
         sessionsToDelete.forEach { session in
             sessionManager.deleteSession(session: session, eventStoreManager: eventStoreManager)
         }
+        
+        // Send updated sessions to watch after deletion
+        sendSessionsToWatch(sessionManager: sessionManager)
     }
     
     func createNewSession(sessionManager: JoggingSessionManager, storeManager: EventStoreManager, preferencesManager: PreferencesManager){
@@ -249,6 +273,9 @@ final class UpcomingSessionViewModel: ObservableObject {
                     sessionType: SessionType.jogging)
             }
         }
+        
+        // Send newly created sessions to watch
+        sendSessionsToWatch(sessionManager: sessionManager)
     }
     
     /// goal functions

@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BC11861C2DD25FD000427D54 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC11861B2DD25FD000427D54 /* WidgetKit.framework */; };
+		BC11861E2DD25FD000427D54 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC11861D2DD25FD000427D54 /* SwiftUI.framework */; };
+		BC11863E2DD260D600427D54 /* SwifterCompanion Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = BC1186312DD260D500427D54 /* SwifterCompanion Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BC1186452DD2612000427D54 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1186442DD2612000427D54 /* WatchConnectivityManager.swift */; };
+		BC1186492DD2631700427D54 /* SharedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1186482DD2631700427D54 /* SharedModels.swift */; };
+		BC11864A2DD2631700427D54 /* SharedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1186482DD2631700427D54 /* SharedModels.swift */; };
+		BC11864B2DD2631700427D54 /* SharedModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1186482DD2631700427D54 /* SharedModels.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7E6A02D02D911FBC000EC773 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +31,40 @@
 			remoteGlobalIDString = 7E6A02BE2D911FBB000EC773;
 			remoteInfo = Swifter;
 		};
+		BC11863C2DD260D600427D54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7E6A02B72D911FBB000EC773 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC1186302DD260D500427D54;
+			remoteInfo = "SwifterCompanion Watch App";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BC1186422DD260D600427D54 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				BC11863E2DD260D600427D54 /* SwifterCompanion Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7E6A02BF2D911FBB000EC773 /* Swifter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swifter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E6A02CF2D911FBC000EC773 /* SwifterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwifterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7E6A02D92D911FBC000EC773 /* SwifterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwifterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC1186192DD25FD000427D54 /* SwifterComplicationsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SwifterComplicationsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC11861B2DD25FD000427D54 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		BC11861D2DD25FD000427D54 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		BC11862C2DD2608B00427D54 /* SwifterComplicationsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwifterComplicationsExtension.entitlements; sourceTree = "<group>"; };
+		BC1186312DD260D500427D54 /* SwifterCompanion Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwifterCompanion Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC1186442DD2612000427D54 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
+		BC1186482DD2631700427D54 /* SharedModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedModels.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +74,13 @@
 				Info.plist,
 			);
 			target = 7E6A02BE2D911FBB000EC773 /* Swifter */;
+		};
+		BC1186292DD25FD100427D54 /* Exceptions for "SwifterComplications" folder in "SwifterComplicationsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BC1186182DD25FD000427D54 /* SwifterComplicationsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +101,19 @@
 		7E6A02DC2D911FBC000EC773 /* SwifterUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = SwifterUITests;
+			sourceTree = "<group>";
+		};
+		BC11861F2DD25FD000427D54 /* SwifterComplications */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BC1186292DD25FD100427D54 /* Exceptions for "SwifterComplications" folder in "SwifterComplicationsExtension" target */,
+			);
+			path = SwifterComplications;
+			sourceTree = "<group>";
+		};
+		BC1186322DD260D500427D54 /* SwifterCompanion Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "SwifterCompanion Watch App";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,15 +140,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC1186162DD25FD000427D54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC11861E2DD25FD000427D54 /* SwiftUI.framework in Frameworks */,
+				BC11861C2DD25FD000427D54 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC11862E2DD260D500427D54 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		7E6A02B62D911FBB000EC773 = {
 			isa = PBXGroup;
 			children = (
+				BC1186482DD2631700427D54 /* SharedModels.swift */,
+				BC1186442DD2612000427D54 /* WatchConnectivityManager.swift */,
+				BC11862C2DD2608B00427D54 /* SwifterComplicationsExtension.entitlements */,
 				7E6A02C12D911FBB000EC773 /* Swifter */,
 				7E6A02D22D911FBC000EC773 /* SwifterTests */,
 				7E6A02DC2D911FBC000EC773 /* SwifterUITests */,
+				BC11861F2DD25FD000427D54 /* SwifterComplications */,
+				BC1186322DD260D500427D54 /* SwifterCompanion Watch App */,
+				BC11861A2DD25FD000427D54 /* Frameworks */,
 				7E6A02C02D911FBB000EC773 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +181,19 @@
 				7E6A02BF2D911FBB000EC773 /* Swifter.app */,
 				7E6A02CF2D911FBC000EC773 /* SwifterTests.xctest */,
 				7E6A02D92D911FBC000EC773 /* SwifterUITests.xctest */,
+				BC1186192DD25FD000427D54 /* SwifterComplicationsExtension.appex */,
+				BC1186312DD260D500427D54 /* SwifterCompanion Watch App.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BC11861A2DD25FD000427D54 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BC11861B2DD25FD000427D54 /* WidgetKit.framework */,
+				BC11861D2DD25FD000427D54 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +206,12 @@
 				7E6A02BB2D911FBB000EC773 /* Sources */,
 				7E6A02BC2D911FBB000EC773 /* Frameworks */,
 				7E6A02BD2D911FBB000EC773 /* Resources */,
+				BC1186422DD260D600427D54 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				BC11863D2DD260D600427D54 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7E6A02C12D911FBB000EC773 /* Swifter */,
@@ -176,6 +269,50 @@
 			productReference = 7E6A02D92D911FBC000EC773 /* SwifterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BC1186182DD25FD000427D54 /* SwifterComplicationsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC11862A2DD25FD100427D54 /* Build configuration list for PBXNativeTarget "SwifterComplicationsExtension" */;
+			buildPhases = (
+				BC1186152DD25FD000427D54 /* Sources */,
+				BC1186162DD25FD000427D54 /* Frameworks */,
+				BC1186172DD25FD000427D54 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BC11861F2DD25FD000427D54 /* SwifterComplications */,
+			);
+			name = SwifterComplicationsExtension;
+			packageProductDependencies = (
+			);
+			productName = SwifterComplicationsExtension;
+			productReference = BC1186192DD25FD000427D54 /* SwifterComplicationsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		BC1186302DD260D500427D54 /* SwifterCompanion Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC11863F2DD260D600427D54 /* Build configuration list for PBXNativeTarget "SwifterCompanion Watch App" */;
+			buildPhases = (
+				BC11862D2DD260D500427D54 /* Sources */,
+				BC11862E2DD260D500427D54 /* Frameworks */,
+				BC11862F2DD260D500427D54 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BC1186322DD260D500427D54 /* SwifterCompanion Watch App */,
+			);
+			name = "SwifterCompanion Watch App";
+			packageProductDependencies = (
+			);
+			productName = "SwifterCompanion Watch App";
+			productReference = BC1186312DD260D500427D54 /* SwifterCompanion Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -197,6 +334,12 @@
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 7E6A02BE2D911FBB000EC773;
 					};
+					BC1186182DD25FD000427D54 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					BC1186302DD260D500427D54 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 				};
 			};
 			buildConfigurationList = 7E6A02BA2D911FBB000EC773 /* Build configuration list for PBXProject "Swifter" */;
@@ -216,6 +359,8 @@
 				7E6A02BE2D911FBB000EC773 /* Swifter */,
 				7E6A02CE2D911FBC000EC773 /* SwifterTests */,
 				7E6A02D82D911FBC000EC773 /* SwifterUITests */,
+				BC1186182DD25FD000427D54 /* SwifterComplicationsExtension */,
+				BC1186302DD260D500427D54 /* SwifterCompanion Watch App */,
 			);
 		};
 /* End PBXProject section */
@@ -242,6 +387,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC1186172DD25FD000427D54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC11862F2DD260D500427D54 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -249,6 +408,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC1186452DD2612000427D54 /* WatchConnectivityManager.swift in Sources */,
+				BC1186492DD2631700427D54 /* SharedModels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +427,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC1186152DD25FD000427D54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC11864A2DD2631700427D54 /* SharedModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC11862D2DD260D500427D54 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC11864B2DD2631700427D54 /* SharedModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -278,6 +455,11 @@
 			isa = PBXTargetDependency;
 			target = 7E6A02BE2D911FBB000EC773 /* Swifter */;
 			targetProxy = 7E6A02DA2D911FBC000EC773 /* PBXContainerItemProxy */;
+		};
+		BC11863D2DD260D600427D54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC1186302DD260D500427D54 /* SwifterCompanion Watch App */;
+			targetProxy = BC11863C2DD260D600427D54 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -406,10 +588,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Swifter/Swifter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Swifter/Preview Content\"";
-				DEVELOPMENT_TEAM = L3VLC5A2SQ;
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Swifter/Info.plist;
@@ -436,10 +619,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Swifter/Swifter.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Swifter/Preview Content\"";
-				DEVELOPMENT_TEAM = L3VLC5A2SQ;
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Swifter/Info.plist;
@@ -529,6 +713,130 @@
 			};
 			name = Release;
 		};
+		BC1186272DD25FD100427D54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SwifterComplicationsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwifterComplications/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SwifterComplications;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "-.SwifterComplications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		BC1186282DD25FD100427D54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = SwifterComplicationsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwifterComplications/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SwifterComplications;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "-.SwifterComplications";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
+		BC1186402DD260D600427D54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "SwifterCompanion Watch App/SwifterCompanion Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwifterCompanion Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SwifterCompanion;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "adeline-swiftUI-tutorial.Swifter";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "adeline-swiftUI-tutorial.Swifter.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Debug;
+		};
+		BC1186412DD260D600427D54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "SwifterCompanion Watch App/SwifterCompanion Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SwifterCompanion Watch App/Preview Content\"";
+				DEVELOPMENT_TEAM = DFNFS7DYVX;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = SwifterCompanion;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "adeline-swiftUI-tutorial.Swifter";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "adeline-swiftUI-tutorial.Swifter.watchkitapp";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 11.2;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -564,6 +872,24 @@
 			buildConfigurations = (
 				7E6A02EA2D911FBC000EC773 /* Debug */,
 				7E6A02EB2D911FBC000EC773 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC11862A2DD25FD100427D54 /* Build configuration list for PBXNativeTarget "SwifterComplicationsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC1186272DD25FD100427D54 /* Debug */,
+				BC1186282DD25FD100427D54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC11863F2DD260D600427D54 /* Build configuration list for PBXNativeTarget "SwifterCompanion Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC1186402DD260D600427D54 /* Debug */,
+				BC1186412DD260D600427D54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

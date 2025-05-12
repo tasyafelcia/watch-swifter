@@ -1,9 +1,5 @@
-//
 //  SwifterApp.swift
-//  Swifter
-//
-//  Created by Adeline Charlotte Augustinne on 24/03/25.
-//
+//  Update your existing SwifterApp.swift
 
 import SwiftUI
 
@@ -11,11 +7,13 @@ import SwiftUI
 struct SwifterApp: App {
     
     @StateObject private var eventStoreManager = EventStoreManager()
+    @StateObject private var watchConnectivity = WatchConnectivityManager.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(eventStoreManager)
+                .environmentObject(watchConnectivity)
         }
         .modelContainer(for: [PreferencesModel.self, GoalModel.self, SessionModel.self])
     }
