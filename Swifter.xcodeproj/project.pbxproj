@@ -112,27 +112,6 @@
 			);
 			target = BC11865B2DD2911E00427D54 /* SwifterWatchWidgetExtension */;
 		};
-		BC1186762DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "Swifter" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				SwifterWatchWidget.swift,
-			);
-			target = 7E6A02BE2D911FBB000EC773 /* Swifter */;
-		};
-		BC1186772DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "SwifterComplicationsExtension" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				SwifterWatchWidget.swift,
-			);
-			target = BC1186182DD25FD000427D54 /* SwifterComplicationsExtension */;
-		};
-		BC1186782DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "SwifterCompanion Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				SwifterWatchWidget.swift,
-			);
-			target = BC1186302DD260D500427D54 /* SwifterCompanion Watch App */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -170,9 +149,6 @@
 		BC11865F2DD2911E00427D54 /* SwifterWatchWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BC1186762DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "Swifter" target */,
-				BC1186772DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "SwifterComplicationsExtension" target */,
-				BC1186782DD2948200427D54 /* Exceptions for "SwifterWatchWidget" folder in "SwifterCompanion Watch App" target */,
 				BC11866D2DD2911E00427D54 /* Exceptions for "SwifterWatchWidget" folder in "SwifterWatchWidgetExtension" target */,
 			);
 			path = SwifterWatchWidget;

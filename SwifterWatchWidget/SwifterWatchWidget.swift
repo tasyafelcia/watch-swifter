@@ -1,8 +1,11 @@
 //  SwifterWatchWidget.swift
-//  Custom widget complication for Apple Watch
+//  Updated with your custom design - green accent bar layout
+//  Uses shared SessionData from SharedModels.swift (no duplication)
 
 import WidgetKit
 import SwiftUI
+
+// No SessionData definition here - it comes from SharedModels.swift
 
 
 struct SwifterWatchWidgetBundle: WidgetBundle {
@@ -15,18 +18,18 @@ struct SwifterWatchWidget: Widget {
     let kind: String = "SwifterWatchWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: JoggingProvider()) { entry in
-            JoggingWidgetView(entry: entry)
+        StaticConfiguration(kind: kind, provider: SessionProvider()) { entry in
+            SwifterWidgetView(entry: entry)
                 .widgetURL(URL(string: "swifter://sessions"))
         }
-        .configurationDisplayName("Swifter Custom")
-        .description("Custom jogging session widget")
+        .configurationDisplayName("Swifter Sessions")
+        .description("Your upcoming jogging sessions")
         .supportedFamilies([.accessoryRectangular])
     }
 }
 
 // MARK: - Timeline Entry
-struct JoggingEntry: TimelineEntry {
+struct SessionEntry: TimelineEntry {
     let date: Date
     let sessionType: String
     let startTime: Date
@@ -53,9 +56,10 @@ struct JoggingEntry: TimelineEntry {
 }
 
 // MARK: - Timeline Provider
-struct JoggingProvider: TimelineProvider {
-    func placeholder(in context: Context) -> JoggingEntry {
-        JoggingEntry(
+struct SessionProvider: TimelineProvider {
+    func placeholder(in context: Context) -> SessionEntry {
+        // Placeholder data that matches your design
+        SessionEntry(
             date: Date(),
             sessionType: "Pre-jogging",
             startTime: Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date()) ?? Date(),
@@ -63,131 +67,146 @@ struct JoggingProvider: TimelineProvider {
         )
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (JoggingEntry) -> ()) {
-        let entry = JoggingEntry(
-            date: Date(),
-            sessionType: "Pre-jogging",
-            startTime: Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date()) ?? Date(),
-            endTime: Calendar.current.date(bySettingHour: 11, minute: 0, second: 0, of: Date()) ?? Date()
-        )
-        completion(entry)
+    func getSnapshot(in context: Context, completion: @escaping (SessionEntry) -> ()) {
+        // Try to get real session data
+        if let session = getNextSessionFromUserDefaults() {
+            let entry = SessionEntry(
+                date: Date(),
+                sessionType: session.sessionType,
+                startTime: session.startTime,
+                endTime: session.endTime
+            )
+            completion(entry)
+        } else {
+            // Use placeholder if no data
+            completion(placeholder(in: context))
+        }
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        // Create timeline entries
-        var entries: [JoggingEntry] = []
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SessionEntry>) -> ()) {
+        var entries: [SessionEntry] = []
+        let currentDate = Date()
         
         // Get session data from UserDefaults
-        let sessionData = getSessionFromUserDefaults()
+        if let session = getNextSessionFromUserDefaults() {
+            let entry = SessionEntry(
+                date: currentDate,
+                sessionType: session.sessionType,
+                startTime: session.startTime,
+                endTime: session.endTime
+            )
+            entries.append(entry)
+        } else {
+            // Use placeholder if no data
+            entries.append(placeholder(in: context))
+        }
         
-        let entry = JoggingEntry(
-            date: Date(),
-            sessionType: sessionData?.sessionType ?? "Pre-jogging",
-            startTime: sessionData?.startTime ?? Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date())!,
-            endTime: sessionData?.endTime ?? Calendar.current.date(bySettingHour: 11, minute: 0, second: 0, of: Date())!
-        )
-        entries.append(entry)
-        
-        // Create timeline with 5-minute refresh
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+        // Refresh every 5 minutes
+        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate)!
         let timeline = Timeline(entries: entries, policy: .after(refreshDate))
         completion(timeline)
     }
     
-    private func getSessionFromUserDefaults() -> SessionData? {
+    private func getNextSessionFromUserDefaults() -> SessionData? {
         // Try app group first
         if let appGroup = UserDefaults(suiteName: "group.com.yourteam.swifter.shared") {
             if let data = appGroup.data(forKey: "nextSession") {
-                let decoder = JSONDecoder()
-                decoder.dateDecodingStrategy = .iso8601
-                return try? decoder.decode(SessionData.self, from: data)
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .iso8601
+                    return try decoder.decode(SessionData.self, from: data)
+                } catch {
+                    print("SwifterWatchWidget: Error decoding session from app group: \(error)")
+                }
             }
         }
         
         // Fallback to standard UserDefaults
         if let data = UserDefaults.standard.data(forKey: "nextSession") {
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
-            return try? decoder.decode(SessionData.self, from: data)
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                return try decoder.decode(SessionData.self, from: data)
+            } catch {
+                print("SwifterWatchWidget: Error decoding session from standard UserDefaults: \(error)")
+            }
         }
         
         return nil
     }
 }
 
-// MARK: - Widget View
-struct JoggingWidgetView: View {
-    var entry: JoggingProvider.Entry
-    @Environment(\.widgetRenderingMode) var renderingMode
+// MARK: - Custom Widget View (Your Design)
+struct SwifterWidgetView: View {
+    var entry: SessionProvider.Entry
 
-    var body: some View {
-        CustomComplicationView(entry: entry)
-    }
-}
-
-// MARK: - Custom Design
-struct CustomComplicationView: View {
-    let entry: JoggingEntry
-    
     var body: some View {
         HStack(spacing: 0) {
-            // Green accent bar
+            // Green accent bar on the left (exactly like your design)
             Rectangle()
-                .fill(Color.green)
-                .frame(width: 4)
+                .fill(Color(.sRGB, red: 0.2, green: 0.9, blue: 0.6))
+                .frame(width: 6)
+                .cornerRadius(3)
+                .edgesIgnoringSafeArea(.vertical)
             
-            // Main content
-            VStack(alignment: .leading, spacing: 2) {
+            // Main content area
+            VStack(alignment: .leading, spacing: 4) {
+                // Session type title
                 Text(entry.titleText)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.white)
                     .lineLimit(1)
                 
+                // Time range (main text)
                 Text(entry.timeText)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
                     .lineLimit(1)
                 
+                // App branding
                 Text("Swifter")
                     .font(.system(size: 11, weight: .regular))
                     .foregroundColor(.gray)
                     .lineLimit(1)
             }
-            .padding(.leading, 8)
-            .padding(.vertical, 4)
+            .padding(.leading, 12)
+            .padding(.vertical, 8)
             
-            Spacer()
+            Spacer(minLength: 8)
             
-            // Right side icon with motion lines
+            // Right side: Motion lines + Running figure
             ZStack {
-                // Motion lines
-                HStack(spacing: 2) {
+                // Motion lines behind the runner
+                HStack(spacing: 4) {
+                    // Tallest line (green)
                     Rectangle()
-                        .fill(Color.green)
-                        .frame(width: 2, height: 8)
-                        .cornerRadius(1)
+                        .fill(Color(.sRGB, red: 0.2, green: 0.9, blue: 0.6))
+                        .frame(width: 3, height: 14)
+                        .cornerRadius(1.5)
                     
+                    // Medium line (blue)
                     Rectangle()
-                        .fill(Color.cyan)
-                        .frame(width: 2, height: 6)
-                        .cornerRadius(1)
+                        .fill(Color(.sRGB, red: 0.0, green: 0.7, blue: 0.9))
+                        .frame(width: 3, height: 10)
+                        .cornerRadius(1.5)
                     
+                    // Shortest line (green)
                     Rectangle()
-                        .fill(Color.green)
-                        .frame(width: 2, height: 4)
-                        .cornerRadius(1)
+                        .fill(Color(.sRGB, red: 0.2, green: 0.9, blue: 0.6))
+                        .frame(width: 3, height: 6)
+                        .cornerRadius(1.5)
                 }
-                .offset(x: -8)
+                .offset(x: -18, y: 0)
                 
-                // Running figure
+                // Running figure icon
                 Image(systemName: "figure.run")
-                    .font(.system(size: 20, weight: .regular))
+                    .font(.system(size: 28, weight: .medium))
                     .foregroundColor(.white)
             }
-            .padding(.trailing, 8)
+            .padding(.trailing, 14)
         }
         .containerBackground(Color.black, for: .widget)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
@@ -195,10 +214,10 @@ struct CustomComplicationView: View {
 #Preview(as: .accessoryRectangular) {
     SwifterWatchWidget()
 } timeline: {
-    JoggingEntry(
+    SessionEntry(
         date: Date(),
         sessionType: "Pre-jogging",
-        startTime: Date(),
-        endTime: Date().addingTimeInterval(1800)
+        startTime: Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date()) ?? Date(),
+        endTime: Calendar.current.date(bySettingHour: 11, minute: 0, second: 0, of: Date()) ?? Date()
     )
 }
