@@ -1,5 +1,5 @@
 //  SwifterComplications.swift
-//  Corrected version - NO WatchSessionManager references
+//  Fixed for proper rendering in all contexts
 
 import WidgetKit
 import SwiftUI
@@ -21,7 +21,7 @@ struct SwifterComplications: Widget {
         }
         .configurationDisplayName("Swifter Sessions")
         .description("Shows your next jogging session")
-        .supportedFamilies([.accessoryRectangular, .accessoryCircular, .accessoryInline])
+        .supportedFamilies([.accessoryRectangular])
     }
 }
 
@@ -52,20 +52,40 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<ComplicationEntry>) -> ()) {
         let currentDate = Date()
-        var entries: [ComplicationEntry] = []
         
-        // Create a simple timeline entry with placeholder data
-        // Complications will be updated through the watch app when real data is available
+        // Try to get session data from UserDefaults (shared with watch app)
+        let nextSession = getNextSessionFromUserDefaults()
+        
         let entry = ComplicationEntry(
             date: currentDate,
-            session: createMockUpcomingSession()
+            session: nextSession ?? createPlaceholderSession()
         )
-        entries.append(entry)
         
-        // Refresh every 15 minutes
-        let refreshDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
-        let timeline = Timeline(entries: entries, policy: .after(refreshDate))
+        // Refresh every 5 minutes
+        let refreshDate = Calendar.current.date(byAdding: .minute, value: 5, to: currentDate)!
+        let timeline = Timeline(entries: [entry], policy: .after(refreshDate))
         completion(timeline)
+    }
+    
+    // Get session data from UserDefaults (shared container)
+    private func getNextSessionFromUserDefaults() -> SessionData? {
+        // Try to get from UserDefaults with app group
+        if let appGroupDefaults = UserDefaults(suiteName: "group.com.yourteam.swifter.shared") {
+            if let sessionData = appGroupDefaults.data(forKey: "nextSession") {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .iso8601
+                return try? decoder.decode(SessionData.self, from: sessionData)
+            }
+        }
+        
+        // Fallback to standard UserDefaults
+        if let sessionData = UserDefaults.standard.data(forKey: "nextSession") {
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            return try? decoder.decode(SessionData.self, from: sessionData)
+        }
+        
+        return nil
     }
     
     // Create placeholder session for complication
@@ -83,64 +103,34 @@ struct Provider: TimelineProvider {
             calendarEventID: "placeholder"
         )
     }
-    
-    // Create mock upcoming session
-    private func createMockUpcomingSession() -> SessionData {
-        let calendar = Calendar.current
-        let now = Date()
-        let startTime = calendar.date(byAdding: .hour, value: 2, to: now)!
-        let endTime = calendar.date(byAdding: .minute, value: 30, to: startTime)!
-        
-        return SessionData(
-            id: "mock-\(now.timeIntervalSince1970)",
-            startTime: startTime,
-            endTime: endTime,
-            sessionType: "Jogging",
-            status: "Not started yet",
-            calendarEventID: "mock"
-        )
-    }
 }
 
 // MARK: - Entry View
 struct SwifterComplicationsEntryView: View {
     var entry: Provider.Entry
     @Environment(\.widgetFamily) var family
+    @Environment(\.widgetRenderingMode) var renderingMode
 
     var body: some View {
         if let session = entry.session {
-            switch family {
-            case .accessoryRectangular:
-                RectangularComplicationView(session: session)
-            case .accessoryCircular:
-                CircularComplicationView(session: session)
-            case .accessoryInline:
-                InlineComplicationView(session: session)
-            default:
-                RectangularComplicationView(session: session)
-            }
+            AdaptiveComplicationView(session: session)
         } else {
-            // Empty state
-            VStack {
-                Image(systemName: "figure.run")
-                    .font(.caption)
-                Text("No sessions")
-                    .font(.caption2)
-            }
-            .foregroundColor(.gray)
+            // Fallback view
+            EmptyAdaptiveComplicationView()
         }
     }
 }
 
-// MARK: - Rectangular Complication View
-struct RectangularComplicationView: View {
+// MARK: - Adaptive Complication View (Works in all contexts)
+struct AdaptiveComplicationView: View {
     let session: SessionData
+    @Environment(\.widgetRenderingMode) var renderingMode
     
     var body: some View {
         HStack(spacing: 0) {
-            // Green accent bar
+            // Green accent bar (adapts to context)
             Rectangle()
-                .fill(Color.green)
+                .fill(accentColor)
                 .frame(width: 4)
             
             // Main content area
@@ -148,19 +138,19 @@ struct RectangularComplicationView: View {
                 // Title text
                 Text(titleText)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryColor)
                     .lineLimit(1)
                 
                 // Time text
                 Text(timeRangeText)
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryColor)
                     .lineLimit(1)
                 
                 // App name
                 Text("Swifter")
                     .font(.system(size: 11, weight: .regular))
-                    .foregroundColor(.gray)
+                    .foregroundColor(secondaryColor)
                     .lineLimit(1)
             }
             .padding(.leading, 8)
@@ -168,31 +158,102 @@ struct RectangularComplicationView: View {
             
             Spacer()
             
-            // Running icon with motion lines
+            // Right side icon with motion lines
             ZStack {
                 // Motion lines
                 HStack(spacing: 2) {
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(Color.green)
+                    Rectangle()
+                        .fill(accentColor)
                         .frame(width: 2, height: 8)
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(Color.blue)
+                        .cornerRadius(1)
+                    
+                    Rectangle()
+                        .fill(secondaryAccentColor)
                         .frame(width: 2, height: 6)
-                    RoundedRectangle(cornerRadius: 1)
-                        .fill(Color.green)
+                        .cornerRadius(1)
+                    
+                    Rectangle()
+                        .fill(accentColor)
                         .frame(width: 2, height: 4)
+                        .cornerRadius(1)
                 }
                 .offset(x: -8)
                 
-                // Running figure
+                // Running figure icon
                 Image(systemName: "figure.run")
                     .font(.system(size: 20, weight: .regular))
-                    .foregroundColor(.white)
+                    .foregroundColor(primaryColor)
             }
             .padding(.trailing, 8)
         }
-        .background(Color.black)
+        .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+    }
+    
+    // Adaptive colors based on rendering mode
+    private var backgroundColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.black
+        case .accented:
+            return Color.clear
+        case .vibrant:
+            return Color.clear
+        default:
+            return Color.black
+        }
+    }
+    
+    private var primaryColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.white
+        case .accented:
+            return Color.primary
+        case .vibrant:
+            return Color.primary
+        default:
+            return Color.white
+        }
+    }
+    
+    private var secondaryColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.gray
+        case .accented:
+            return Color.secondary
+        case .vibrant:
+            return Color.secondary
+        default:
+            return Color.gray
+        }
+    }
+    
+    private var accentColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.green
+        case .accented:
+            return Color.accentColor
+        case .vibrant:
+            return Color.accentColor
+        default:
+            return Color.green
+        }
+    }
+    
+    private var secondaryAccentColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.cyan
+        case .accented:
+            return Color.accentColor.opacity(0.7)
+        case .vibrant:
+            return Color.accentColor.opacity(0.7)
+        default:
+            return Color.cyan
+        }
     }
     
     private var titleText: String {
@@ -215,99 +276,100 @@ struct RectangularComplicationView: View {
     }
 }
 
-// MARK: - Circular Complication View
-struct CircularComplicationView: View {
-    let session: SessionData
+// MARK: - Empty Adaptive Complication View
+struct EmptyAdaptiveComplicationView: View {
+    @Environment(\.widgetRenderingMode) var renderingMode
     
     var body: some View {
-        ZStack {
-            // Background circle
-            Circle()
-                .fill(Color.black)
+        HStack(spacing: 0) {
+            // Green accent bar
+            Rectangle()
+                .fill(accentColor)
+                .frame(width: 4)
             
-            // Progress ring (optional)
-            Circle()
-                .stroke(Color.green, lineWidth: 3)
-                .opacity(0.3)
-            
-            VStack(spacing: 2) {
-                // Running icon
-                Image(systemName: iconName)
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundColor(.white)
+            // Content
+            VStack(alignment: .leading, spacing: 2) {
+                Text("No Sessions")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(primaryColor)
+                    .lineLimit(1)
                 
-                // Time until session
-                Text(timeUntilText)
-                    .font(.system(size: 10, weight: .bold))
-                    .foregroundColor(.green)
+                Text("Tap to open")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundColor(secondaryColor)
+                    .lineLimit(1)
+                
+                Text("Swifter")
+                    .font(.system(size: 11, weight: .regular))
+                    .foregroundColor(secondaryColor)
+                    .lineLimit(1)
             }
-        }
-    }
-    
-    private var iconName: String {
-        switch session.sessionType {
-        case "Pre-jogging":
-            return "figure.flexibility"
-        case "Jogging":
-            return "figure.run"
-        case "Post-jogging":
-            return "figure.cooldown"
-        default:
-            return "figure.run"
-        }
-    }
-    
-    private var timeUntilText: String {
-        let timeUntil = session.startTime.timeIntervalSinceNow
-        
-        if timeUntil < 0 {
-            return "NOW"
-        }
-        
-        let hours = Int(timeUntil) / 3600
-        let minutes = Int(timeUntil) % 3600 / 60
-        
-        if hours > 0 {
-            return "\(hours)h"
-        } else if minutes > 0 {
-            return "\(minutes)m"
-        } else {
-            return "NOW"
-        }
-    }
-}
-
-// MARK: - Inline Complication View
-struct InlineComplicationView: View {
-    let session: SessionData
-    
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: iconName)
-                .foregroundColor(.green)
+            .padding(.leading, 8)
+            .padding(.vertical, 4)
             
-            Text("\(timeRangeText) Swifter")
-                .foregroundColor(.white)
+            Spacer()
+            
+            // Running icon
+            Image(systemName: "figure.run")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundColor(primaryColor)
+                .padding(.trailing, 8)
         }
+        .background(backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
     
-    private var iconName: String {
-        switch session.sessionType {
-        case "Pre-jogging":
-            return "figure.flexibility"
-        case "Jogging":
-            return "figure.run"
-        case "Post-jogging":
-            return "figure.cooldown"
+    // Adaptive colors based on rendering mode
+    private var backgroundColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.black
+        case .accented:
+            return Color.clear
+        case .vibrant:
+            return Color.clear
         default:
-            return "figure.run"
+            return Color.black
         }
     }
     
-    private var timeRangeText: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: session.startTime)
+    private var primaryColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.white
+        case .accented:
+            return Color.primary
+        case .vibrant:
+            return Color.primary
+        default:
+            return Color.white
+        }
+    }
+    
+    private var secondaryColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.gray
+        case .accented:
+            return Color.secondary
+        case .vibrant:
+            return Color.secondary
+        default:
+            return Color.gray
+        }
+    }
+    
+    private var accentColor: Color {
+        switch renderingMode {
+        case .fullColor:
+            return Color.green
+        case .accented:
+            return Color.accentColor
+        case .vibrant:
+            return Color.accentColor
+        default:
+            return Color.green
+        }
     }
 }
 
@@ -319,25 +381,9 @@ struct InlineComplicationView: View {
         date: Date(),
         session: SessionData(
             id: "preview",
-            startTime: Date(),
-            endTime: Date().addingTimeInterval(1800),
+            startTime: Calendar.current.date(bySettingHour: 10, minute: 30, second: 0, of: Date()) ?? Date(),
+            endTime: Calendar.current.date(bySettingHour: 11, minute: 0, second: 0, of: Date()) ?? Date(),
             sessionType: "Pre-jogging",
-            status: "Not started yet",
-            calendarEventID: "preview"
-        )
-    )
-}
-
-#Preview("Circular", as: .accessoryCircular) {
-    SwifterComplications()
-} timeline: {
-    ComplicationEntry(
-        date: Date(),
-        session: SessionData(
-            id: "preview",
-            startTime: Date().addingTimeInterval(1800),
-            endTime: Date().addingTimeInterval(3600),
-            sessionType: "Jogging",
             status: "Not started yet",
             calendarEventID: "preview"
         )

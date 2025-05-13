@@ -1,51 +1,79 @@
-//  ContentView.swift (Watch App) - FIXED VERSION
+//  ContentView.swift (Watch App) - WITH CUSTOM WIDGET DEBUG BUTTONS
 //  Replace in SwifterCompanion Watch App target
 
 import SwiftUI
+import WidgetKit
 
 struct ContentView: View {
     @StateObject private var sessionManager = WatchSessionManager.shared
     @State private var isRefreshing = false
+    @State private var showDebugInfo = false
+    @State private var currentIndex = 0
     
     var body: some View {
         NavigationView {
             VStack {
-                if sessionManager.sortedSessionsForToday.isEmpty {
+                if sessionManager.displaySessions.isEmpty {
                     // Empty state
                     VStack(spacing: 16) {
                         Image(systemName: "figure.run.circle")
                             .font(.system(size: 50))
                             .foregroundColor(.gray)
                         
-                        Text("No sessions today")
+                        Text("No upcoming sessions")
                             .font(.headline)
                             .foregroundColor(.gray)
                         
-                        Button("Refresh") {
-                            refreshSessions()
+                        // Connection status
+                        Text(sessionManager.connectionStatus)
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                        
+                        VStack(spacing: 8) {
+                            Button("Refresh") {
+                                refreshSessions()
+                            }
+                            .buttonStyle(.bordered)
+                            
+                            Button(showDebugInfo ? "Hide Debug" : "Show Debug") {
+                                showDebugInfo.toggle()
+                            }
+                            .buttonStyle(.borderless)
+                            .font(.caption)
                         }
-                        .buttonStyle(.bordered)
+                        
+                        if showDebugInfo {
+                            debugInfoView
+                        }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    // Sessions list
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(sessionManager.sortedSessionsForToday, id: \.id) { session in
-                                SessionCard(session: session)
-                            }
+                    // Card-based sessions UI
+                    TabView(selection: $currentIndex) {
+                        ForEach(Array(sessionManager.displaySessions.enumerated()), id: \.element.id) { index, session in
+                            SessionCardView(
+                                session: session,
+                                isMainCard: true,
+                                index: index,
+                                currentIndex: currentIndex
+                            )
+                            .tag(index)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 20)
                     }
-                    .refreshable {
-                        await refreshSessionsAsync()
-                    }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .animation(.easeInOut(duration: 0.2), value: currentIndex)
                 }
             }
             .navigationTitle("Sessions")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(showDebugInfo ? "🐛" : "••") {
+                        showDebugInfo.toggle()
+                    }
+                    .font(.caption)
+                }
+                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: refreshSessions) {
                         Image(systemName: "arrow.clockwise")
@@ -66,6 +94,65 @@ struct ContentView: View {
         }
     }
     
+    private var debugInfoView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Debug Info")
+                .font(.headline)
+                .foregroundColor(.white)
+            
+            Text("Status: \(sessionManager.connectionStatus)")
+                .font(.caption)
+                .foregroundColor(.orange)
+            
+            Text("Connected: \(sessionManager.isConnected ? "Yes" : "No")")
+                .font(.caption)
+                .foregroundColor(sessionManager.isConnected ? .green : .red)
+            
+            Text("Last Update: \(DateFormatter.localizedString(from: sessionManager.lastUpdate, dateStyle: .none, timeStyle: .short))")
+                .font(.caption)
+                .foregroundColor(.gray)
+            
+            Text("Total Sessions: \(sessionManager.sessions.count)")
+                .font(.caption)
+                .foregroundColor(.gray)
+            
+            // Widget debug buttons
+            VStack(spacing: 6) {
+                Text("Widget Controls")
+                    .font(.caption)
+                    .foregroundColor(.yellow)
+                
+                Button("Update Custom Widget") {
+                    sessionManager.updateCustomWidget()
+                    print("Custom widget updated")
+                }
+                .buttonStyle(.bordered)
+                
+                Button("Force Refresh All Widgets") {
+                    sessionManager.forceRefreshWidgets()
+                    print("All widgets force refreshed")
+                }
+                .buttonStyle(.bordered)
+                
+                Button("Clear Widget Cache") {
+                    UserDefaults.standard.removeObject(forKey: "nextSession")
+                    if let appGroup = UserDefaults(suiteName: "group.com.yourteam.swifter.shared") {
+                        appGroup.removeObject(forKey: "nextSession")
+                    }
+                    WidgetCenter.shared.reloadAllTimelines()
+                    print("Widget cache cleared")
+                }
+                .buttonStyle(.borderless)
+                .font(.caption)
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color.gray.opacity(0.2))
+        )
+    }
+    
     private func refreshSessions() {
         isRefreshing = true
         sessionManager.requestSessionsFromPhone()
@@ -75,150 +162,136 @@ struct ContentView: View {
             isRefreshing = false
         }
     }
-    
-    private func refreshSessionsAsync() async {
-        await withCheckedContinuation { continuation in
-            refreshSessions()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                continuation.resume()
-            }
-        }
-    }
 }
 
-struct SessionCard: View {
+struct SessionCardView: View {
     let session: SessionData
+    let isMainCard: Bool
+    let index: Int
+    let currentIndex: Int
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Session type and status
-            HStack {
-                Text(session.sessionType)
-                    .font(.headline)
-                    .foregroundColor(.white)
+        GeometryReader { geometry in
+            VStack(spacing: 16) {
+                // Session type label (small text at top)
+                Text(sessionTypeLabel)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .opacity(isMainCard ? 0.8 : 0.6)
                 
-                Spacer()
-                
-                StatusBadge(status: session.status)
-            }
-            
-            // Time information
-            HStack {
-                Image(systemName: iconName)
-                    .font(.title2)
-                    .foregroundColor(iconColor)
-                    .frame(width: 30)
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(timeRangeText)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
+                // Main card
+                VStack(spacing: 16) {
+                    VStack(spacing: 8) {
+                        Text(mainSessionType)
+                            .font(.system(size: 32, weight: .semibold))
+                            .foregroundColor(.white)
+                        
+                        Text(timeRangeText)
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundColor(.white)
+                    }
                     
-                    if session.startTime > Date() {
-                        Text("in \(timeUntilText)")
-                            .font(.caption)
-                            .foregroundColor(.orange)
-                    } else if session.endTime > Date() {
-                        Text("Currently active")
-                            .font(.caption)
-                            .foregroundColor(.green)
+                    Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        ZStack {
+                            // Motion lines
+                            HStack(spacing: 3) {
+                                RoundedRectangle(cornerRadius: 1.5)
+                                    .fill(Color.green)
+                                    .frame(width: 3, height: 12)
+                                RoundedRectangle(cornerRadius: 1.5)
+                                    .fill(Color.blue)
+                                    .frame(width: 3, height: 9)
+                                RoundedRectangle(cornerRadius: 1.5)
+                                    .fill(Color.green)
+                                    .frame(width: 3, height: 6)
+                            }
+                            .offset(x: -12)
+                            
+                            // Running figure
+                            Image(systemName: "figure.run")
+                                .font(.system(size: 32, weight: .medium))
+                                .foregroundColor(.white)
+                        }
+                        .padding(.trailing, 20)
                     }
                 }
+                .padding(24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 24)
+                        .fill(cardBackgroundColor)
+                )
+                .scaleEffect(cardScale)
+                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: cardScale)
                 
-                Spacer()
+                // Bottom session type label (small text at bottom)
+                Text(bottomSessionType)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+                    .opacity(isMainCard ? 0.8 : 0.6)
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(backgroundColor.opacity(0.8))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(iconColor.opacity(0.3), lineWidth: 1)
-        )
     }
     
-    private var iconName: String {
+    private var sessionTypeLabel: String {
+        let allSessions = WatchSessionManager.shared.displaySessions
+        let sessionIndex = allSessions.firstIndex { $0.id == session.id } ?? 0
+        
+        if sessionIndex > 0 {
+            return allSessions[sessionIndex - 1].sessionType
+        }
+        return ""
+    }
+    
+    private var mainSessionType: String {
         switch session.sessionType {
         case "Pre-jogging":
-            return "figure.flexibility"
+            return "Pre Jog"
         case "Jogging":
-            return "figure.run"
+            return "Jog Session"
         case "Post-jogging":
-            return "figure.cooldown"
+            return "Post Jog"
         default:
-            return "figure.run"
+            return session.sessionType
         }
     }
     
-    private var iconColor: Color {
-        switch session.sessionType {
-        case "Pre-jogging":
-            return .green
-        case "Jogging":
-            return .blue
-        case "Post-jogging":
-            return .purple
-        default:
-            return .blue
+    private var bottomSessionType: String {
+        let allSessions = WatchSessionManager.shared.displaySessions
+        let sessionIndex = allSessions.firstIndex { $0.id == session.id } ?? 0
+        
+        if sessionIndex < allSessions.count - 1 {
+            return allSessions[sessionIndex + 1].sessionType == "Pre-jogging" ? "Pre-Jog" :
+                   allSessions[sessionIndex + 1].sessionType == "Jogging" ? "Jog Session" :
+                   allSessions[sessionIndex + 1].sessionType == "Post-jogging" ? "Post-Jog" :
+                   allSessions[sessionIndex + 1].sessionType
         }
-    }
-    
-    // FIXED: Use a more compatible approach for background color
-    private var backgroundColor: Color {
-        if #available(watchOS 7.0, *) {
-            return Color(UIColor.black)
-        } else {
-            return Color.gray.opacity(0.2)
-        }
+        return ""
     }
     
     private var timeRangeText: String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
+        formatter.dateFormat = "H:mm"
         return "\(formatter.string(from: session.startTime)) - \(formatter.string(from: session.endTime))"
     }
     
-    private var timeUntilText: String {
-        let timeUntil = session.startTime.timeIntervalSinceNow
-        
-        let hours = Int(timeUntil) / 3600
-        let minutes = Int(timeUntil) % 3600 / 60
-        
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        } else if minutes > 0 {
-            return "\(minutes)m"
-        } else {
-            return "now"
+    private var cardBackgroundColor: Color {
+        if session.sessionType == "Jogging" {
+            return Color.green
         }
-    }
-}
-
-struct StatusBadge: View {
-    let status: String
-    
-    var body: some View {
-        Text(status)
-            .font(.caption)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(statusColor.opacity(0.8))
-            .foregroundColor(.white)
-            .clipShape(Capsule())
+        return Color.black
     }
     
-    private var statusColor: Color {
-        switch status {
-        case "Done":
-            return .green
-        case "Not started yet":
-            return .orange
-        case "Missed":
-            return .red
-        default:
-            return .gray
+    private var cardScale: CGFloat {
+        if currentIndex == index {
+            return 1.0 // Full scale for focused card
+        } else {
+            return 0.85 // Slightly smaller for non-focused cards
         }
     }
 }

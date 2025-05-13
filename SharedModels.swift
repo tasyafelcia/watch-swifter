@@ -3,6 +3,7 @@
 //  - Swifter (iPhone app)
 //  - SwifterCompanion Watch App
 //  - SwifterComplications
+//  - SwifterWatchWidget
 
 import Foundation
 
