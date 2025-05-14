@@ -1,4 +1,3 @@
-//  WatchConnectivityManager.swift (iPhone app) - UPDATED VERSION
 
 import Foundation
 import WatchConnectivity

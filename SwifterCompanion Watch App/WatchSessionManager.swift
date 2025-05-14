@@ -1,5 +1,4 @@
-//  WatchSessionManager.swift (Watch App) - COMPLETE UPDATED VERSION
-//  Note: SessionData is now imported from SharedModels.swift
+//  SessionData is now imported from SharedModels.swift
 
 import Foundation
 import WatchConnectivity

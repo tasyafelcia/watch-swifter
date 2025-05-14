@@ -1,13 +1,8 @@
-//  SwifterWatchWidget.swift
-//  Updated with your custom design - green accent bar layout
-//  Uses shared SessionData from SharedModels.swift (no duplication)
-
 import WidgetKit
 import SwiftUI
 
-// No SessionData definition here - it comes from SharedModels.swift
 
-
+@main
 struct SwifterWatchWidgetBundle: WidgetBundle {
     var body: some Widget {
         SwifterWatchWidget()
@@ -137,6 +132,8 @@ struct SessionProvider: TimelineProvider {
 }
 
 // MARK: - Custom Widget View (Your Design)
+
+import SwiftUI
 struct SwifterWidgetView: View {
     var entry: SessionProvider.Entry
 

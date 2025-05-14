@@ -1,10 +1,3 @@
-//  SharedModels.swift
-//  Make sure this file is added to ALL three targets:
-//  - Swifter (iPhone app)
-//  - SwifterCompanion Watch App
-//  - SwifterComplications
-//  - SwifterWatchWidget
-
 import Foundation
 
 struct SessionData: Codable {
