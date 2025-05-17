@@ -1,4 +1,3 @@
-
 import Foundation
 import WatchConnectivity
 import SwiftData
@@ -42,23 +41,23 @@ class WatchConnectivityManager: NSObject, ObservableObject {
         do {
             let data = try JSONEncoder().encode(sessionData)
 
-            // ✅ 1. Try sendMessage
+            //  Try sendMessage
             if WCSession.default.isReachable {
                 WCSession.default.sendMessage(["sessions": data], replyHandler: { response in
                     print("Sessions sent successfully via message")
                 }) { error in
                     print("Failed to send message: \(error.localizedDescription)")
-                    // ✅ 2. Fallback to transferUserInfo
+                    //  Fallback to transferUserInfo
                     WCSession.default.transferUserInfo(["sessions": data])
                     print("Sessions sent via transferUserInfo (fallback)")
                 }
             } else {
-                // ✅ 3. transferUserInfo as background fallback
+                //  transferUserInfo as background fallback
                 WCSession.default.transferUserInfo(["sessions": data])
                 print("Sessions sent via transferUserInfo (background)")
             }
 
-            // ✅ 4. Always try updateApplicationContext for guaranteed delivery
+            // Always try updateApplicationContext for guaranteed delivery
             do {
                 try WCSession.default.updateApplicationContext(["sessions": data])
                 print("Sessions sent via updateApplicationContext")

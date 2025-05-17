@@ -1,6 +1,3 @@
-//  ContentView.swift (Watch App) - WITH CUSTOM WIDGET DEBUG BUTTONS
-//  Replace in SwifterCompanion Watch App target
-
 import SwiftUI
 import WidgetKit
 

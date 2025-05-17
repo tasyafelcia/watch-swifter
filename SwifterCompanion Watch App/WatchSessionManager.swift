@@ -1,5 +1,4 @@
 //  SessionData is now imported from SharedModels.swift
-
 import Foundation
 import WatchConnectivity
 import WidgetKit
